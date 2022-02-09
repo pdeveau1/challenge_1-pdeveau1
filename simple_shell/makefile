@@ -3,6 +3,9 @@ override CFLAGS := -Wall -Werror -std=gnu99 -O1 -g $(CFLAGS) -I.
 # Build the parser .o file
 myshell_parser.o: myshell_parser.c myshell_parser.h
 
+# Build the simpleshell .o file
+myshell_simpleshell.o: myshell_simpleshell.c myshell_simpleshell.h
+
 # Automatically discover all test files
 test_c_files=$(shell find tests -type f -name '*.c')
 test_o_files=$(test_c_files:.c=.o)
