@@ -17,11 +17,11 @@ void run_shell()
     char in_command[MAX_LINE_LENGTH];
     //run until user enters CTRL + D
     //CTRL + D returns EOF
-    user_prompt(in_command);
-    while(in_command != 0)
+    do
     {
         user_prompt(in_command);
-    }
+    }while(!feof(stdin));
+    printf("\n");
 }
 
 int main()
