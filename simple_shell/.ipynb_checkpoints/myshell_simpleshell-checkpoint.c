@@ -6,9 +6,25 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-char* user_prompt()
+void user_prompt(char *in_command)
+{
+    printf("my_shell$");
+    fgets(in_command, MAX_LINE_LENGTH, stdin);
+}
+
+void run_shell()
 {
     char in_command[MAX_LINE_LENGTH];
-    printf("my_shell$");
-    gets(in_command);
+    //run until user enters CTRL + D
+    //CTRL + D returns EOF
+    user_prompt(in_command);
+    while(in_command != 0)
+    {
+        user_prompt(in_command);
+    }
+}
+
+int main()
+{
+    run_shell();
 }

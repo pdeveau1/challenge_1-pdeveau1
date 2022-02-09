@@ -5,7 +5,8 @@
 #include <stdio.h>
 
 #define MAX_LINE_LENGTH 512
-char* user_prompt();
+void user_prompt(char*);
 
+void run_shell();
 
 #endif /* MYSHELL_SIMPLESHELL_H */
