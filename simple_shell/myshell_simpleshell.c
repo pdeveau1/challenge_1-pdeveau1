@@ -6,10 +6,13 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+//https://stackoverflow.com/questions/7271939/warning-ignoring-return-value-of-scanf-declared-with-attribute-warn-unused-r/13390863
+static inline void ignore_ret() {}
+
 void user_prompt(char *in_command)
 {
     printf("my_shell$");
-    fgets(in_command, MAX_LINE_LENGTH, stdin);
+    ignore_ret(fgets(in_command, MAX_LINE_LENGTH, stdin));
 }
 
 void run_shell()
@@ -35,6 +38,7 @@ void run_shell()
     
     printf("\n");
 }
+
 
 int main()
 {

@@ -1,4 +1,5 @@
 #include "myshell_simpleshell.h"
+#include "myshell_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +15,7 @@
 int
 main(void)
 {
-	char* in_command = user_prompt();
+	run_shell();
     
 	// Test that a pipeline was returned
 	//TEST_ASSERT(my_pipeline != NULL);

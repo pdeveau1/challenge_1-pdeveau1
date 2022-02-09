@@ -18,7 +18,7 @@ test_files=$(test_c_files:.c=)
 .PHONY: clean check checkprogs
 
 # Rules to build each individual test
-tests/%: tests/%.o myshell_parser.o
+tests/%: tests/%.o myshell_parser.o myshell_simpleshell.o
 	$(CC) $(LDFLAGS) $+ $(LOADLIBES) $(LDLIBS) -o $@
 
 # Build all of the test programs
