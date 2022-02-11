@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 //https://stackoverflow.com/questions/7271939/warning-ignoring-return-value-of-scanf-declared-with-attribute-warn-unused-r/13390863
 static inline void ignore_ret() {}
@@ -19,6 +20,8 @@ void user_prompt(char *in_command)
 void execute_command(char** command)
 {
     pid_t pid = fork(); //return value: -1 = failed, 0 = in child process, positive = in parent process
+    char path[MAX_LINE_LENGTH];
+    //char *envp[] = {(char*) "PATH=/bin", 0};
      //Given in class slides
     if(pid == -1) //process failed
     {
@@ -27,10 +30,15 @@ void execute_command(char** command)
     else if(pid ==0) //parent process
     {
         //waitpid(-1, &status, 0); //wait for child to exit
+        wait(NULL);
     }
     else //child process
     {
-        execve(command[0], command, 0); //execute command
+        strcpy(path, "/bin/");
+        strcat(path, command[0]);
+        //execute command
+        //execve(cmd, command, envp); 
+        execvp(path, command);
     }
 }
 
@@ -38,22 +46,24 @@ void run_shell()
 {
     char in_command[MAX_LINE_LENGTH];
     struct pipeline *pipe;
+    
+    //prompt and get input from user
+    user_prompt(in_command);
+    
     //run until user enters CTRL + D
     //CTRL + D returns EOF
-    do
+    while(!feof(stdin))
     {
-        //prompt and get input from user
-        user_prompt(in_command);
+        
         //parse the command
         pipe = pipeline_build(in_command);
         //Execute the command
         execute_command(pipe->commands->command_args);
-       
-        
-        
-        
+        //free memory for pipe
         pipeline_free(pipe);
-    }while(!feof(stdin));
+        //prompt and get input from user
+        user_prompt(in_command);
+    }
     
     printf("\n");
 }
