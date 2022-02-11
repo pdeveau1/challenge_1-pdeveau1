@@ -34,6 +34,8 @@ void execute_command(char** command)
     }
     else //child process
     {
+        close(0); //close stdin
+        close(1); //close stdout
         strcpy(path, "/bin/");
         strcat(path, command[0]);
         //execute command
