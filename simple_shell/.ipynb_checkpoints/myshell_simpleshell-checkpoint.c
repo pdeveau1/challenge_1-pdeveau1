@@ -26,7 +26,6 @@ void execute_command(struct pipeline_command * commands)
 {
     pid_t pid = fork(); //return value: -1 = failed, 0 = in child process, positive = in parent process
     int status;
-    char path[MAX_LINE_LENGTH];
     
     int in = execute_redirect_in(commands->redirect_in_path);
     int out = execute_redirect_out(commands->redirect_out_path);
@@ -50,7 +49,8 @@ void execute_command(struct pipeline_command * commands)
     }
     else 
     {
-        waitpid(pid, & status, WUNTRACED);
+        //waitpid(pid, & status, WUNTRACED);
+        wait(&pid);
     }
 }
 
@@ -98,7 +98,7 @@ void run_shell()
     
     //run until user enters CTRL + D
     //CTRL + D returns EOF
-    //while(!feof(stdin))
+    while(in_command != NULL)
     {
         
         //parse the command
