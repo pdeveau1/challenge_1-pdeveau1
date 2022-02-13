@@ -36,8 +36,8 @@ void execute_command(struct pipeline_command * commands)
         {
           printf("dash: command not found: %s\n", commands->command_args[0]);
         }
-        reset_inout(in, out);
         //after execution, revert back to stdin and stdout
+        reset_inout(in, out);
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
@@ -74,7 +74,7 @@ int execute_redirect_out(char* outpath)
     int out;
     if(outpath)
     {
-        out = open(outpath,O_WRONLY);
+        out = open(outpath, O_CREAT|O_TRUNC|O_WRONLY, 0644);
     }
     else
     {
