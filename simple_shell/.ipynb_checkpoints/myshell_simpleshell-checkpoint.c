@@ -27,20 +27,17 @@ void execute_command(struct pipeline_command * commands)
     pid_t pid = fork(); //return value: -1 = failed, 0 = in child process, positive = in parent process
     int status;
     
-    int in = execute_redirect_in(commands->redirect_in_path);
-    int out = execute_redirect_out(commands->redirect_out_path);
     
     if (pid == 0) 
     {
+        int in = execute_redirect_in(commands->redirect_in_path);
+        int out = execute_redirect_out(commands->redirect_out_path);
         if (execvp(commands->command_args[0], commands->command_args) < 0)
         {
           printf("dash: command not found: %s\n", commands->command_args[0]);
         }
+        reset_inout(in, out);
         //after execution, revert back to stdin and stdout
-        dup2(in, 0);
-        dup2(out, 1);
-        close(in);
-        close(out);
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
@@ -86,6 +83,14 @@ int execute_redirect_out(char* outpath)
     dup2(out,1);
     close(out);
     return tmp;
+}
+
+void reset_inout(int in, int out)
+{
+    dup2(in, 0);
+    dup2(out, 1);
+    close(in);
+    close(out);
 }
 
 void run_shell()

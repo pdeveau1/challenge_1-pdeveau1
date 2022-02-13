@@ -24,6 +24,7 @@ void execute_pipeline(char*);
 //The ampersand character '&’ should allow the user to execute a command (or pipeline of commands) in the background. In this case, the shell immediately displays a prompt for the next line regardless of whether the commands on the previous line have finished or are still in progress
 void execute_background(char*);
 
+void reset_inout(int, int);
 //overarching function to run shell processes
 void run_shell();
 #endif /* MYSHELL_SIMPLESHELL_H */
