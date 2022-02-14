@@ -111,7 +111,7 @@ void run_shell()
 }
 
 
-/*int main()
+int main()
 {
     run_shell();
-}*/
+}
