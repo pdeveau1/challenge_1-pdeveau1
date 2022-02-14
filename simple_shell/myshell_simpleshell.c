@@ -26,8 +26,9 @@ void user_prompt(char *in_command)
     ignore_ret(fgets(in_command, MAX_LINE_LENGTH, stdin));
 }
 
-void execute_command(struct pipeline_command *command)
+void execute_command(struct pipeline *pipe_line)
 {
+    struct pipeline_command *command = pipe_line->commands;
     int status;
     pid_t pid = fork();
     if(pid == 0)
@@ -51,7 +52,8 @@ void execute_command(struct pipeline_command *command)
     }
     else
     {
-        waitpid(pid, &status, 0);
+        if(!pipe_line->is_background)
+            waitpid(pid, &status, 0);
         //exit(status);
     }
 }
@@ -99,7 +101,7 @@ void run_shell()
         pipe = pipeline_build(in_command);
         
         //Execute the command
-        execute_command(pipe->commands);
+        execute_command(pipe);
         
         //free memory for pipe
         pipeline_free(pipe);
