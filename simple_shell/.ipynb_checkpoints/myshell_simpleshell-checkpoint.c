@@ -26,6 +26,29 @@ void user_prompt(char *in_command)
     ignore_ret(fgets(in_command, MAX_LINE_LENGTH, stdin));
 }
 
+void execute_command(struct pipeline_command *command)
+{
+    int status;
+    pid_t pid = fork();
+    if(pid == 0)
+    {
+        if(execvp(command->command_args[0], command->command_args) < 0) 
+        {     
+            printf("*** ERROR: exec failed\n");
+            exit(1);
+        }
+    }
+    else if(pid < 0)
+    {
+        printf("Failed to fprk\n");
+        //exit(1);
+    }
+    else
+    {
+        waitpid(pid, &status, 0);
+        //exit(status);
+    }
+}
 
 void run_shell()
 {
@@ -44,6 +67,7 @@ void run_shell()
         pipe = pipeline_build(in_command);
         
         //Execute the command
+        execute_command(pipe->commands);
         
         //free memory for pipe
         pipeline_free(pipe);
