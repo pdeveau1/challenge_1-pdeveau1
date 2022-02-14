@@ -15,7 +15,6 @@
 int
 main(void)
 {
-	run_shell();
     
 	// Test that a pipeline was returned
 	//TEST_ASSERT(my_pipeline != NULL);
