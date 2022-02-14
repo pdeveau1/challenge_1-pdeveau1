@@ -44,11 +44,11 @@ void execute_pipeline(struct pipeline *pipe_line)
             {
                 int in = open(commands->redirect_in_path, O_RDONLY, 0);
                 dup2(in, STDIN_FILENO); //set stdin to input file
-                close(in); //close input file
+                close(in); //close input file 
             }
             if(commands->redirect_out_path != NULL) //check if redirect to output
             {
-                int out = open(commands->redirect_out_path, O_CREAT|O_WRONLY|O_TRUNC, 644);
+                int out = open(commands->redirect_out_path, O_CREAT|O_WRONLY, 00700);
                 dup2(out, STDOUT_FILENO); //set stdout to output file
                 close(out); //close output file
             }
