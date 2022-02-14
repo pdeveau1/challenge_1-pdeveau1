@@ -56,6 +56,14 @@ void execute_pipeline(struct pipeline *pipe_line)
             {
                 exit(1);
             }
+            dup2(std_in, STDIN_FILENO);
+            close(std_in);
+            dup2(std_out, STDOUT_FILENO);
+            close(std_out);
+        }
+        else
+        {
+            wait(NULL);
         }
     }
     else //if pipeline
@@ -69,8 +77,8 @@ void execute_pipeline(struct pipeline *pipe_line)
         }
         input = execute_command(commands, input, 0, 1); //execute last command
     }
-    dup2(std_in, STDIN_FILENO);
-    dup2(std_out, STDOUT_FILENO);
+    
+    
 }
 //write to stdout, '>', 1
 //read from stdin, '<', 0
