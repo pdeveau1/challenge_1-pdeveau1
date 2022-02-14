@@ -30,14 +30,14 @@ void execute_command(struct pipeline_command * commands)
     
     if (pid == 0) 
     {
-        int in = execute_redirect_in(commands->redirect_in_path);
-        int out = execute_redirect_out(commands->redirect_out_path);
+        int *in = execute_redirect_in(commands->redirect_in_path);
+        int *out = execute_redirect_out(commands->redirect_out_path);
         if (execvp(commands->command_args[0], commands->command_args) < 0)
         {
           printf("dash: command not found: %s\n", commands->command_args[0]);
         }
         //after execution, revert back to stdin and stdout
-        reset_inout(in, out);
+        reset_inout(in[0], out[0]);
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
@@ -51,8 +51,9 @@ void execute_command(struct pipeline_command * commands)
     }
 }
 
-int execute_redirect_in(char* inpath)
+int* execute_redirect_in(char* inpath)
 {
+    static int in_vals[2];
     int tmp = dup(0);
     int in;
     if(inpath)
@@ -65,11 +66,14 @@ int execute_redirect_in(char* inpath)
     }
     dup2(in,0);
     close(in);
-    return tmp;
+    in_vals[0] = tmp;
+    in_vals[1] = in;
+    return in_vals;
 }
 
-int execute_redirect_out(char* outpath)
+int* execute_redirect_out(char* outpath)
 {
+    static int out_vals[2];
     int tmp = dup(1);
     int out;
     if(outpath)
@@ -82,7 +86,9 @@ int execute_redirect_out(char* outpath)
     }
     dup2(out,1);
     close(out);
-    return tmp;
+    out_vals[0] = tmp;
+    out_vals[1] = out;
+    return out_vals;
 }
 
 void reset_inout(int in, int out)
