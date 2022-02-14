@@ -19,7 +19,7 @@ int execute_redirect_in(char*);
 int execute_redirect_out(char*);
 
 //The pipe character allows several commands to be connected, forming a pipeline. The output of the command before “|” is piped to the input of the command following “|”. A series of multiple piped commands is allowed on the command line. Spacing is irrelevant (described above). Example: cat a| sort | wc indicates that the output of the cat command is channeled to the sort and sort sends its output to the input of the wc program.
-int* execute_pipeline();
+int execute_pipeline(struct pipeline_command*);
 
 //The ampersand character '&’ should allow the user to execute a command (or pipeline of commands) in the background. In this case, the shell immediately displays a prompt for the next line regardless of whether the commands on the previous line have finished or are still in progress
 void execute_background(char*);

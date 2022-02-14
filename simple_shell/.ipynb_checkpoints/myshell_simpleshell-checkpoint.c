@@ -9,111 +9,52 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-#define TOK_DELIM " \t\r\n"
-#define RED "\033[0;31m"
-#define RESET "\e[0m"
-
-//https://stackoverflow.com/questions/7271939/warning-ignoring-return-value-of-scanf-declared-with-attribute-warn-unused-r/13390863
-static inline void ignore_ret() {}
-
-void user_prompt(char *in_command)
+int user_prompt(char* command)
 {
+    //print prompt for user
     printf("my_shell$");
-    if(feof(stdin))
+    fflush(NULL);
+    
+    //get input from user
+    if (!fgets(command, MAX_LINE_LENGTH, stdin))
     {
-        _Exit(0);
+        return 0; //if user enters EOF
     }
-    ignore_ret(fgets(in_command, MAX_LINE_LENGTH, stdin));
+    else
+    {
+        return 1;
+    }
 }
 
 void execute_command(struct pipeline *pipe_line)
 {
-    struct pipeline_command *command = pipe_line->commands;
-    int status;
-    pid_t pid = fork();
-    if(pid == 0)
+    struct pipeline_command *commands = pipe_line->commands;
+    bool background = pipe_line->is_background;
+    
+    //loop through each command in the pipeline
+    while(commands->next != NULL)
     {
-        int std_in = execute_redirect_in(command->redirect_in_path);
-        int std_out = execute_redirect_out(command->redirect_out_path);
-        if(execvp(command->command_args[0], command->command_args) < 0) 
-        {     
-            printf("*** ERROR: exec failed\n");
-            exit(1);
-        }
-        dup2(std_in,0);
-        close(std_in);
-        dup2(std_out,1);
-        close(std_out);
-    }
-    else if(pid < 0)
-    {
-        printf("Failed to fork\n");
-        //exit(1);
-    }
-    else
-    {
-        if(!pipe_line->is_background)
-            waitpid(pid, &status, 0);
-        //exit(status);
+        
     }
 }
-
-int execute_redirect_in(char* in_path)
-{
-    int in;
-    int std_in = dup(0);
-    if(in_path)
-    {
-        in = open(in_path,O_RDONLY, 0);
-        dup2(in, 0);
-        close(in);
-    }
-    return std_in;
-}
-
-int execute_redirect_out(char* out_path)
-{
-    int out;
-    int std_out = dup(1);
-    if(out_path)
-    {
-        out = open(out_path,O_CREAT|O_WRONLY|O_TRUNC, 644);
-        dup2(out,1);
-        close(out);
-    }
-    return std_out;
-}
-
 void run_shell()
 {
-    char in_command[MAX_LINE_LENGTH];
-    struct pipeline *pipe;
+    char command[MAX_LINE_LENGTH]; //stores command
+    struct pipeline *pipe_line; //command parsed
     
-    //prompt and get input from user
-    user_prompt(in_command);
-    
-    //run until user enters CTRL + D
-    //CTRL + D returns EOF
-    while(1)
+    //get user input until CTRL+D is entered
+    while(user_prompt(command))
     {
+        pipe_line = pipeline_build(command); //parse command entered
         
-        //parse the command
-        pipe = pipeline_build(in_command);
+        execute_command(pipe_line);
         
-        //Execute the command
-        execute_command(pipe);
-        
-        //free memory for pipe
-        pipeline_free(pipe);
-        
-        //prompt and get input from user
-        user_prompt(in_command);
-        //exit(in_command == NULL);
+        free(pipe_line); //free memory when done using pipeline
     }
 }
-
 
 int main()
 {
     run_shell();
+    return 0;
 }
