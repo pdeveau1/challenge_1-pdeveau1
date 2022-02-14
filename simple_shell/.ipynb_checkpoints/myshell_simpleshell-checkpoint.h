@@ -9,7 +9,6 @@
 
 //prompts user for command input
 void user_prompt(char*);
-void user_prompt_n(char*);
 
 void execute_command(struct pipeline_command *);
 
@@ -27,5 +26,5 @@ void execute_background(char*);
 
 void reset_inout(int, int);
 //overarching function to run shell processes
-void run_shell(int);
+void run_shell();
 #endif /* MYSHELL_SIMPLESHELL_H */
