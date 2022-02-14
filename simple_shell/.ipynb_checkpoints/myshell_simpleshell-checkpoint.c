@@ -19,85 +19,13 @@ static inline void ignore_ret() {}
 void user_prompt(char *in_command)
 {
     printf("my_shell$");
+    if(feof(stdin))
+    {
+        _Exit(0);
+    }
     ignore_ret(fgets(in_command, MAX_LINE_LENGTH, stdin));
 }
 
-void execute_command(struct pipeline_command * commands)
-{
-    pid_t pid = fork(); //return value: -1 = failed, 0 = in child process, positive = in parent process
-    int status;
-    
-    
-    if (pid == 0) 
-    {
-        int *in = execute_redirect_in(commands->redirect_in_path);
-        int *out = execute_redirect_out(commands->redirect_out_path);
-        if (execvp(commands->command_args[0], commands->command_args) < 0)
-        {
-          printf("dash: command not found: %s\n", commands->command_args[0]);
-        }
-        //after execution, revert back to stdin and stdout
-        reset_inout(in[0], out[0]);
-        exit(EXIT_FAILURE);
-    }
-    else if (pid < 0)
-    {
-        printf(RED "Error forking" RESET "\n");
-    }
-    else 
-    {
-        //waitpid(pid, & status, WUNTRACED);
-        wait(&pid);
-    }
-}
-
-int* execute_redirect_in(char* inpath)
-{
-    static int in_vals[2];
-    int tmp = dup(0);
-    int in;
-    if(inpath)
-    {
-        in = open(inpath, O_RDONLY); //open input file
-    }
-    else
-    {
-        in = dup(tmp); //duplicate stdin for input file
-    }
-    dup2(in,0);
-    close(in);
-    in_vals[0] = tmp;
-    in_vals[1] = in;
-    return in_vals;
-}
-
-int* execute_redirect_out(char* outpath)
-{
-    static int out_vals[2];
-    int tmp = dup(1);
-    int out;
-    if(outpath)
-    {
-        out = open(outpath, O_CREAT|O_TRUNC|O_WRONLY, 0644);
-    }
-    else
-    {
-        out = dup(tmp);
-    }
-    dup2(out,1);
-    close(out);
-    out_vals[0] = tmp;
-    out_vals[1] = out;
-    return out_vals;
-}
-
-void reset_inout(int in, int out)
-{
-    dup2(in, 0);
-    dup2(out, 1);
-    close(in);
-    close(out);
-}
 
 void run_shell()
 {
@@ -109,23 +37,21 @@ void run_shell()
     
     //run until user enters CTRL + D
     //CTRL + D returns EOF
-    while(in_command != NULL)
+    while(1)
     {
         
         //parse the command
         pipe = pipeline_build(in_command);
         
         //Execute the command
-        execute_command(pipe->commands);
         
         //free memory for pipe
         pipeline_free(pipe);
         
         //prompt and get input from user
         user_prompt(in_command);
+        //exit(in_command == NULL);
     }
-    
-    printf("\n");
 }
 
 

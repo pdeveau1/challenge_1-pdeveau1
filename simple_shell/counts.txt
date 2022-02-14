@@ -1,3 +1,2 @@
-what
-is
-going
+hello
+counts.txt
