@@ -32,15 +32,21 @@ void execute_command(struct pipeline_command *command)
     pid_t pid = fork();
     if(pid == 0)
     {
+        int std_in = execute_redirect_in(command->redirect_in_path);
+        int std_out = execute_redirect_out(command->redirect_out_path);
         if(execvp(command->command_args[0], command->command_args) < 0) 
         {     
             printf("*** ERROR: exec failed\n");
             exit(1);
         }
+        dup2(std_in,0);
+        close(std_in);
+        dup2(std_out,1);
+        close(std_out);
     }
     else if(pid < 0)
     {
-        printf("Failed to fprk\n");
+        printf("Failed to fork\n");
         //exit(1);
     }
     else
@@ -48,6 +54,32 @@ void execute_command(struct pipeline_command *command)
         waitpid(pid, &status, 0);
         //exit(status);
     }
+}
+
+int execute_redirect_in(char* in_path)
+{
+    int in;
+    int std_in = dup(0);
+    if(in_path)
+    {
+        in = open(in_path,O_RDONLY, 0);
+        dup2(in, 0);
+        close(in);
+    }
+    return std_in;
+}
+
+int execute_redirect_out(char* out_path)
+{
+    int out;
+    int std_out = dup(1);
+    if(out_path)
+    {
+        out = open(out_path,O_CREAT|O_WRONLY|O_TRUNC, 644);
+        dup2(out,1);
+        close(out);
+    }
+    return std_out;
 }
 
 void run_shell()
