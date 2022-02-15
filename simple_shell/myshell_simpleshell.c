@@ -33,7 +33,7 @@ int user_prompt(char* command, int n)
 void execute_pipeline(struct pipeline *pipe_line)
 {
     struct pipeline_command *commands = pipe_line->commands;
-    //bool background = pipe_line->is_background;
+    bool background = pipe_line->is_background;
     int std_in, std_out;
     std_in = dup(STDIN_FILENO);
     std_out = dup(STDOUT_FILENO);
@@ -67,7 +67,10 @@ void execute_pipeline(struct pipeline *pipe_line)
         }
         else
         {
-            wait(NULL);
+            if(!background)
+            {
+                wait(NULL);
+            }
         }
     }
     else //if pipeline
@@ -82,9 +85,11 @@ void execute_pipeline(struct pipeline *pipe_line)
             count++;
         }
         input = execute_command(commands, input, 0, 1); //execute last command
-        for(int i = 0; i < count; i++) //wait for child processes to complete
-        {
-            wait(NULL);
+        if(!background){
+            for(int i = 0; i < count; i++) //wait for child processes to complete
+            {
+                wait(NULL);
+            }
         }
     }
     
