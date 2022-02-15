@@ -42,17 +42,29 @@ void execute_pipeline(struct pipeline *pipe_line)
     if(commands->next == NULL) //no pipeline
     {
         int pid = fork();
+        if(pid < 0)
+        {
+            perror("ERROR");
+        }
         if(pid == 0) //child process
         {
             if(commands->redirect_in_path != NULL) //check if redirect to input
             {
                 int in = open(commands->redirect_in_path, O_RDONLY, 0);
+                if(in == -1)
+                {
+                    perror("ERROR");
+                }
                 dup2(in, STDIN_FILENO); //set stdin to input file
                 close(in); //close input file 
             }
             if(commands->redirect_out_path != NULL) //check if redirect to output
             {
                 int out = open(commands->redirect_out_path, O_CREAT|O_WRONLY, 00700);
+                if(out == -1)
+                {
+                    perror("ERROR");
+                }
                 dup2(out, STDOUT_FILENO); //set stdout to output file
                 close(out); //close output file
             }
@@ -118,6 +130,10 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
             if(commands->redirect_in_path != NULL) //check if redirect to input
             {
                 in = open(commands->redirect_in_path, O_RDONLY);
+                if(in == -1)
+                {
+                    perror("ERROR");
+                }
                 dup2(in, STDIN_FILENO); //set stdin to input file
                 close(in); //close input file
             }
@@ -132,6 +148,10 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
             if(commands->redirect_out_path != NULL) //check if redirect to output
             {
                 int out = open(commands->redirect_out_path, O_WRONLY);
+                if(out == -1)
+                {
+                    perror("ERROR");
+                }
                 dup2(out, STDOUT_FILENO); //set stdout to output file
                 close(out); //close output file
             }
