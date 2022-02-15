@@ -42,11 +42,11 @@ void execute_pipeline(struct pipeline *pipe_line)
     if(commands->next == NULL) //no pipeline
     {
         int pid = fork();
-        if(pid < 0)
+        if(pid < 0) //error forking
         {
             perror("ERROR");
         }
-        if(pid == 0) //child process
+        else if(pid == 0) //child process
         {
             if(commands->redirect_in_path != NULL) //check if redirect to input
             {
@@ -77,9 +77,9 @@ void execute_pipeline(struct pipeline *pipe_line)
             dup2(std_out, STDOUT_FILENO);
             close(std_out);
         }
-        else
+        else //parent process
         {
-            if(!background)
+            if(!background) //wait for child to exit if not background
             {
                 wait(NULL);
             }
@@ -117,12 +117,16 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
     int pid; //id of process
     if(pipe(pipe_inout) == -1) //error piping
     {
-        exit(1);
+        perror("ERROR");
     }
     
     pid = fork(); //fork process
     
-    if(pid == 0) //in child process
+    if(pid < 0) //failed to fork
+    {
+        perror("ERROR");
+    }
+    else if(pid == 0) //in child process
     {
         //execute command of pipeline
         if(first) //if first command of the pipeline
