@@ -18,6 +18,7 @@ int user_prompt(char* command)
     //get input from user
     if (!fgets(command, MAX_LINE_LENGTH, stdin))
     {
+        exit(0);
         return 0; //if user enters EOF
     }
     else
@@ -69,13 +70,19 @@ void execute_pipeline(struct pipeline *pipe_line)
     else //if pipeline
     {
         //loop through each command in the pipeline
+        int count = 1;
         int input = execute_command(commands, 0, 1, 0); //execute first command
         while(commands->next != NULL)
         {
             input = execute_command(commands, input, 0, 0); //execute middle commands
             commands = commands->next;
+            count++;
         }
         input = execute_command(commands, input, 0, 1); //execute last command
+        for(int i = 0; i < count; i++) //wait for child processes to complete
+        {
+            wait(NULL);
+        }
     }
     
     
