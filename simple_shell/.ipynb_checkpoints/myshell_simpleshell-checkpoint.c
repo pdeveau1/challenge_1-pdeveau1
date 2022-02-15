@@ -85,11 +85,14 @@ void execute_pipeline(struct pipeline *pipe_line)
             }
         }
     }
+    
+    
     else //if pipeline
     {
         //loop through each command in the pipeline
         int count = 1;
         int input = execute_command(commands, 0, 1, 0); //execute first command
+        commands = commands->next;
         while(commands->next != NULL)
         {
             input = execute_command(commands, input, 0, 0); //execute middle commands
@@ -151,7 +154,7 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
         {
             if(commands->redirect_out_path != NULL) //check if redirect to output
             {
-                int out = open(commands->redirect_out_path, O_WRONLY);
+                int out = open(commands->redirect_out_path, O_CREAT|O_WRONLY, 00700);
                 if(out == -1)
                 {
                     perror("ERROR");
