@@ -107,9 +107,10 @@ void execute_pipeline(struct pipeline *pipe_line)
             }
         }
     }
-    
-    
+    close(std_in);
+    close(std_out);   
 }
+
 //write to stdout, '>', 1
 //read from stdin, '<', 0
 int execute_command(struct pipeline_command *commands, int in_pipe, int first, int last)
@@ -188,6 +189,7 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
         }
     }
     close(pipe_inout[1]); //no longer need to write to pipe
+    close(in);
     if(last)
     {
         close(pipe_inout[0]); //no longer need to read from pipe
