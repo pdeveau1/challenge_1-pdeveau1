@@ -12,7 +12,7 @@
 int user_prompt(char* command, int n)
 {
     //print prompt for user
-    if(!n)
+    if(n == 1)
     {
         printf("my_shell$");
     }
