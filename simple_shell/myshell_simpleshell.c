@@ -9,10 +9,13 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-int user_prompt(char* command)
+int user_prompt(char* command, int n)
 {
     //print prompt for user
-    printf("my_shell$");
+    if(!n)
+    {
+        printf("my_shell$");
+    }
     fflush(NULL);
     
     //get input from user
@@ -145,13 +148,13 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
     
 }
 
-void run_shell()
+void run_shell(int n)
 {
     char command[MAX_LINE_LENGTH]; //stores command
     struct pipeline *pipe_line; //command parsed
     
     //get user input until CTRL+D is entered
-    while(user_prompt(command))
+    while(user_prompt(command, n))
     {
         pipe_line = pipeline_build(command); //parse command entered
         
@@ -161,8 +164,9 @@ void run_shell()
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    run_shell();
+    run_shell(argc);
+
     return 0;
 }

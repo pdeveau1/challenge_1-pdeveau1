@@ -8,8 +8,8 @@
 #define MAX_TOKEN_LENGTH 32
 
 //prompts user for command input
-int user_prompt(char*);
+int user_prompt(char*, int);
 void execute_pipeline(struct pipeline *);
 int execute_command(struct pipeline_command *, int, int, int);
-void run_shell();
+void run_shell(int);
 #endif /* MYSHELL_SIMPLESHELL_H */
