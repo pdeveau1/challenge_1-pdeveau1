@@ -58,7 +58,7 @@ void execute_pipeline(struct pipeline *pipe_line)
             }
             if(execvp(commands->command_args[0], commands->command_args) < 0) //error executing command
             {
-                exit(1);
+                perror("ERROR");               
             }
             dup2(std_in, STDIN_FILENO);
             close(std_in);
@@ -121,6 +121,10 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
                 dup2(in, STDIN_FILENO); //set stdin to input file
                 close(in); //close input file
             }
+            if(commands->redirect_out_path != NULL)
+            {
+                perror("ERROR");
+            }
             dup2(pipe_inout[1], STDOUT_FILENO); //process writes to next process 
         }
         else if(last) //if last command of the pipeline
@@ -131,17 +135,29 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
                 dup2(out, STDOUT_FILENO); //set stdout to output file
                 close(out); //close output file
             }
+            if(commands->redirect_in_path != NULL)
+            {
+                perror("ERROR");
+            }
             dup2(in, STDIN_FILENO); //process reads from last process 
         }
         else //if a command in middle of pipeline
         {
+            if(commands->redirect_out_path != NULL)
+            {
+                perror("ERROR");
+            }
+            if(commands->redirect_in_path != NULL)
+            {
+                perror("ERROR");
+            }
             dup2(in, STDIN_FILENO); //process reads from last process
             dup2(pipe_inout[1], STDOUT_FILENO); //process writes to next process
         }
         
         if(execvp(commands->command_args[0], commands->command_args) < 0) //error executing command
         {
-            exit(1);
+            perror("ERROR");
         }
     }
     close(pipe_inout[1]); //no longer need to write to pipe
