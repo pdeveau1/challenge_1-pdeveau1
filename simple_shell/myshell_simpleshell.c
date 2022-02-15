@@ -136,7 +136,7 @@ int execute_command(struct pipeline_command *commands, int in_pipe, int first, i
         {
             if(commands->redirect_in_path != NULL) //check if redirect to input
             {
-                in = open(commands->redirect_in_path, O_RDONLY);
+                in = open(commands->redirect_in_path, O_RDONLY, 0);
                 if(in == -1)
                 {
                     perror("ERROR");
