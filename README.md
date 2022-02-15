@@ -11,3 +11,6 @@ https://gist.github.com/parse/966049
 
 https://sites.cs.ucsb.edu/~manish/discussion/week2.pdf
 -gave reference for each aspect of the shell and how to approach handling it
+
+
+Link to full GitHub repository: https://github.com/pdeveau1/challenge_1-pdeveau1
