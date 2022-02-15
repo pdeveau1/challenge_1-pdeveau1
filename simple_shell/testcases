@@ -1,0 +1,8 @@
+echo "whoami" | ./myshell
+echo "pwd" | ./myshell
+echo "/bin/pwd" | ./myshell
+echo "try to run this!" | ./myshell
+echo "ls -al" | ./myshell
+echo "ls -al | wc -l" | ./myshell
+echo "ls -al |wc -l>lines_in_ls" | ./myshell
+echo "cat lines_in_ls" | ./myshell
